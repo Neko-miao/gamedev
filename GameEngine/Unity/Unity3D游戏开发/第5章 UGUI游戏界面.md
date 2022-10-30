@@ -59,3 +59,21 @@ UGUI所有的事件都是依赖EeventSsystem组件完成
     - `OnMove`:监听上下左右WSAD方向键，eventData.moveDir表示方向
     - `OnSubmit`:按钮按下事件
     - `OnCancel`:按钮取消事件，按下时按Esc可取消
+
+### 2.2 UI事件管理
+ ### 2.3 UnityAction和UnityEvent
+ ### 2.4 RaycastTarget优化
+ 即，如果不需要相应事件，就不要勾选RaycastTarget，否则EventSystem在Update方法中调用Process时会触发，遍历所有RaycastTartget为true的UI，增加系统开销。
+
+### 2.5 渗透UI事件
+### 2.6 例子——新手引导聚合动画
+- 新手引导的事件最好与业务逻辑分开
+- 可以在引导UI的最前面做一个全屏透明层以挡住所有的事件，当事件点在这层UI上并且将事件渗透下来的同时，处理点击后的逻辑
+- 可以使用<mark>Shader</mark>做一个灰色面板向目标UI聚拢的动画
+
+## 3. Canvas组件
+三种布局方式：
+- Overlay
+- Camera
+- World Space
+### 3.1 自适应屏幕  
