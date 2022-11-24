@@ -77,3 +77,12 @@ UGUI所有的事件都是依赖EeventSsystem组件完成
 - Camera
 - World Space
 ### 3.1 自适应屏幕  
+- 自适应屏幕需要在Canvas组件的同级绑定Canvas Scaler组件
+- 需要提前确定分辨率
+- Screen Match Mode：
+    - Expand：保证Canvas的UI始终在屏幕内
+    - Match Width：宽度不变，自适应高度
+    - Match Height：高度不变，自适应宽度
+    - Shrink：等比缩放，超出屏幕部分会被裁减
+
+- 锚点对齐方式
