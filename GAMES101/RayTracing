@@ -1,0 +1,53 @@
+# Ray Tracing
+
+## Why?
+- Rasterization couldn't handle global effects well 
+    - (Soft) shadows
+    - light bounces more than once
+
+- Rasterization is fast, bug quality is relatively low
+
+- Ray tracing is accurate, but is very slow  
+
+
+## Light Rays
+
+### Three ideas about light rays
+- straight lights
+- not collide with each other
+- reciprocity（also reversibility)
+
+
+## Ray Casting
+- Generate an image by casting one ray per pixel  
+- Check for shadows by sending a ray to the light  
+
+## Recursive(Whitted-Style) Ray Tracing
+multi-bouncing light  
+
+## Ray Equation
+r(t) = o + td, 0<=t<=∞, where
+r is ray, o is origin, d is direction, t is "time(distance)"
+
+## Ray intersection with surface
+
+### with implicit surface 
+solve intersection equation
+
+### with Triangle Mesh 
+- calculate per triangle
+simple, slow(ignore multiple intersection)
+
+- a point is in a triangle
+
+
+## Accelerating Ray-Surface Intersection
+
+### Ray Tracing - performance chanllenges
+- exhaustively ray test!
+- time complexity = #pixels * #objects (* #bounces)
+
+## Bounding Volumes  
+
+Important: box is the intersection of 3 pairs of slabs
+
