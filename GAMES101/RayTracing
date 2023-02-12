@@ -1,4 +1,4 @@
-# Ray Tracing
+# Ray Tracing Part 1
 
 ## Why?
 - Rasterization couldn't handle global effects well 
@@ -50,4 +50,127 @@ simple, slow(ignore multiple intersection)
 ## Bounding Volumes  
 
 Important: box is the intersection of 3 pairs of slabs
+
+
+
+# Ray Tracing Part 2
+
+
+## Uniform Spatial Partitions(Grids)  
+
+- Preprocess - Build Acceleration Grid
+1. FInd bounding box
+2. Create grid
+3. Store each object in overlapping cells  
+
+- Ray-Scene Intersection
+1. Step through grid in ray traversal order
+2. For each grid cell
+    Test intersection with all objects stored at that cell  
+
+- Uniform Grids - When They Work Well
+on large collections of objects that are distributed evenly in size and space  
+
+- Uniform Grids - When They Fail  
+"Teapot in a stadium" problem
+
+
+## Spatial Partitions
+
+- Examples 
+Oct-Tree, KD-Tree, BSP-Tree  
+
+corn: 
+- hard to find whether there exist intersection with triangels and bounding boxes.
+- objects may be stored in more than one leaf node!
+
+### Data Structure for KD-Tree
+- Internal nodes store
+    - split axis: x, y, z...
+    - split position : coordinate of split plane along axis
+    - children : pointers to child nodes
+    - No objects are store in internal nodes
+
+- Leaf nodes store
+    - list of objects  
+
+
+### Objects Partitions & Bounding Volume Hierarchy(BVH)  
+
+- Summary : Building BVHs
+1. Find bounding box
+2. Recursively split set of objects in two subsets
+3. Recompute the bounding box of the subsets
+4. Stop when neccessary
+5. Store objects in each leaf node
+
+- How to subdivide a node?
+1. choose a dimension to split
+2. Heuristic #1: Always choose the longest axis in node
+3. Heuristic #2: Split node at location of **median** object  
+(using quick slection algorithm to find median number)  
+
+- Termination criteria?  
+1. Heuristic:stop when node contains few elements
+
+### Data Structure for BVHs
+- Internal nodes store
+1. bounding box  
+2. Childern : pointers to child nodes  
+
+- Leaf nodes store  
+1. Bounding box  
+2. List of objects  
+
+- Nodes represent subset of primitives in scene  
+1. All objects in subtree  
+
+### Spatial vs Object Partitions  
+- Spatial partition(e.g. KD-tree)  
+1. Partition space into non-overlapping regions  
+2. An objects can be contained in multiple regions  
+
+- Object partition (e.g. BVH)  
+1. Partition set of objects into disjoint subsets  
+2. bounding boxes for each set may overlap in space  
+
+
+## Radiometry - Motivation  
+Perform lighting calculations in a physically correct manner   
+
+### Radiometry  
+- Measurement system and units for illumination  
+- Accurately measure the spatial properties of light  
+- New terms: radiant flux, intensity, irradiance, radiance  
+
+
+### Radiant Energy and Flux(Power)  
+- Definition: Radiant energy, Q[J = Joule]  
+- Definition: Raidant flux(power， phi = dQ/dt[W=Watt][lm=lumen]*  
+- Flux - # photons flowing through a sensor in unit time  
+
+### Important Light Measurements of Interest  
+- Raidant Intensity: Light Emitted From A Source  
+- Irradiance: Light Falling On A Surface  
+- Radiance: Light Traveling Along A Ray  
+
+
+### Radiance Intensity  
+- Definition: power per unity **solid angle**  
+- I(omega)=d phi / d omega[w/sr][lm/sr=cd=candela](sr:solid angle)  
+- Solid angle:ratio of subtended area on sphere to radius squared,  
+    omega = A/(r*r)  
+ - Differential Solid Angles （ polar coordinates)
+    dA = (r * d theta)*(r * sin theta * d phi) = r*r*sin theta*d theta * d phi  
+    d omega = dA / (r*r) = sin(theta)*d theta*d phi  
+
+- use omega to denote a direction vector(unit length) by theta and phi  
+
+
+### Isotropic Point Source   
+phi = ∫ I d omega  = 4πI 
+I = phi / (4π)  
+
+
+
 
