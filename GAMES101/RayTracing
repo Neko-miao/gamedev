@@ -59,7 +59,7 @@ Important: box is the intersection of 3 pairs of slabs
 ## Uniform Spatial Partitions(Grids)  
 
 - Preprocess - Build Acceleration Grid
-1. FInd bounding box
+1. Find bounding box
 2. Create grid
 3. Store each object in overlapping cells  
 
@@ -170,6 +170,236 @@ Perform lighting calculations in a physically correct manner
 ### Isotropic Point Source   
 phi = ∫ I d omega  = 4πI 
 I = phi / (4π)  
+
+
+# Ray Tracing part 3  
+- Irradiance:power per unit area  
+E(x) = phi / A [W/(m * m)][lm/(m*m)=lux]  
+
+- Radiance : power per unit solid angle, per projected unit area
+    - the quantity associated with a ray  
+    - Rendering is all about computing radiance  
+
+- Irradiacne vs Radiance
+    - Irradiance:total power received by area A
+    - Radiance : power received by area A from "dirrection" omega  
+
+
+## Bidirectional Reflectance Distribution Function(BRDF)
+
+### Reflection at a Pioint   
+Raidance from dirction omega turns into the power E that A receives, then  
+power E will become the radiance to any other direction omega  
+
+
+### BRDF  
+represents how much light is reflected into each outgoing direction omega from each incoming direction  
+
+### The Reflection Equation  
+sum of radiance orignated from every possible direction
+
+### Challenge: recursive Equation 
+also light multiply bouncing  
+
+### The Rendering Equation  
+radiance emmitted by self and radiance received from others  
+
+Relected light(Output Image)=Emission + (Reflected light * BRDF * Cosine of Incident angle) 
+
+L = E + K*L
+
+L = E + KE + K*K*E + K*K*K*E + ...
+
+
+# Ray Tracing Part 3 Again
+## Review Concepts  
+- Raidant energy Q:the energy of electromagnetic radiation  
+- Radiant flux(power) phi:energy per unit time  
+- Radiant itensity:power per unit solid angle
+- Solid Angle:ratio of subtended area on sphere to radius squared  
+
+### Differential Solid Angles
+** in sphere coordinate**
+
+
+## Irradiance  
+Definition:the irradiance is the power per unit area incident on a surface point  
+** required light rays perpendicular/projected to suface**
+
+
+## Radiance  
+Raidance is the fundamental field quantity that describes the distribution of light in an enviroment:
+- Raidance is the quantity associated with a ray
+- Rendering is all about computing radiance  
+
+Definition:power emitted, reflected, transmitted or received by a surface, per unit solid angle, per projected unit area 
+
+Recall:
+- Irradiance:power per projected unit area  
+- Intensity:power per solid angle  
+So:
+- Radiance:Irradiance per solid angle
+- Radiance:Intensity per projected unit area  
+
+
+### Iradiance vs. Radiance  
+- Irradiance:total power received by area dA
+- Radiance:power received by area dA from "direction" dw  
+
+## Bidirectional Reflectance Distribution Function(BRDF)
+
+### Reflection at a Point  
+Radiance from direction w1 turns into the power E thar dA receives,
+the power E will become the radiance to any other direction w0. 
+
+### BRDF 
+The BRDF represents how much light is reflected into each outgoing direction from each incoming direction  
+
+### The Reflection Equation  
+incoming radiance: light in scene  
+dA:per pixel or point in mesh   
+outgoing radiance:color should be seen by camera, calculated by sum of contribution of all incomiing radiance
+
+### Challenge:Recursive Equation  
+- Reflected radiance depends on incoming radiance  
+- But incoming radiance depends on reflected radiance at another point  
+- also call it light bouncing  
+
+### The Rendering Equation  
+Re-write the reflection equation by adding an Emission term to make it general!
+
+
+# Ray Tracing part 4  
+
+## Monte Carlo Integration  
+Why:it can be difficult to solve a definite integral (eg.the function is represented by a complex expression or curve)
+
+Sample on the interval [a,b] randomly, and calculate the sum of all area of splited rectangle
+
+Some notes:
+- The more samples, the less variance.  
+- Sample on x, integrate on x.
+
+## Path Tracing  
+Whitted-style ray tracing:
+- always perform specular reflections/refractions  
+- Stop bouncing at diffuse surfaces  
+
+### Problem of Whitted-style Ray Tracing  
+1. Where should the ray be reflected for glossy materials  (Utah teapot)
+2. No reflections between diffuse materials  (Cornell box, Cornell bleed)  
+
+### Whitted-Style Ray Tracing is Wrong  
+But Rendering Equation is Correct!  
+But it involves:
+- Solving an integral over the hemisphere, and 
+- Recursive execution  
+
+### A Simple Monte Carlo Solution 
+- Abuse the concept of Reflection Equation a littele bit.
+- Fancy as it is, it's still just an integration over directions
+- ignore light emitted by point self 
+
+So:
+(PDF:Probability Distribution Function)
+shade(p, wo)
+    Randomly choose N directions wi~pdf 
+    Lo = 0.0 
+    for each wi 
+        Trace a ray r(p, wi)
+        If ray r hit the light 
+            Lo += (1 / N) * L_i * f_r * cosine / pdf(wi)
+    Reture Lo  
+
+### Introducing Global Illumination  
+shade(p, wo)
+    Randomly choose N directions wi~pdf 
+    Lo = 0.0 
+    for each wi 
+        Trace a ray r(p, wi)
+        If ray r hit the light 
+            Lo += (1 / N) * L_i * f_r * cosine / pdf(wi)
+        Else If ray r hit an object at q  
+            Lo += (1 / N) * shade(q, -wi) * f_r * cosine / pdf(wi)  
+    Reture Lo  
+
+
+### Path Tracing
+- problem 1  
+    Explosion of #rays as #bounces go up: #rays = pow(N, #bouncs) 
+
+So let N equal with 1.
+It assume that only 1 ray is traced at each shading point:
+
+shade(p, wo)  
+    Randomly choose ONE direction wi~pdf(wi)  
+    Trace a ray r(p, wi)  
+    If ray r hit the light  
+        Return L_i * f_r * cosine / pdf(wi)  
+    Else If ray r hit an object at q  
+        Return shade(q, -wi) * f_r * cosine / pdf(wi) 
+
+
+it calls path tracing!(FYI, Distributed Ray Tracing if N != 1)  - FYI:for your infomation
+
+### Ray Generation  
+more path tracing and average them!!  
+
+ray_generation(camPos, pixel)  
+    Uniformly choose N sample positions within the pixel  
+    pixel_radiance = 0.0  
+    For each sample in the pixel  
+        Shoot a ray r(camPos, cam_to_sample)  
+        If ray r hit the scene at p  
+            pixel_radiance += 1 / N * shade(p, sample_to_cam)  
+    Return pixel_raidance  
+
+but problem 2:
+when to stop the recursive function -- shade(p, wo)?  
+
+### Solution:Russian Roulette(RR)  
+1. we get result Lo from shade(p, wo) 
+2. Set a probability P(0 < P < 1)  
+    with Probability P, shoot a ray and return shading result divided by P : Lo / P  
+    with Probability 1 - P, don't shoot a ray and get 0  
+3. E = P * (Lo / P) + (1 - P) * 0 = Lo 
+
+shade(p, wo)  
+    Specify a probability P_RR  
+    Randomly select ksi in a uniform distribution in [0, 1]  
+    If ksi > P_RR  
+        return 0.0  
+
+    Randomly choose ONE direction wi~pdf(wi)  
+    Trace a ray r(p, wi)  
+    If ray r hit the light  
+        Return L_i * f_r * cosine / pdf(wi) / P_RR  
+    Else If ray r hit an object at q  
+        Return shade(q, -wi) * f_r * cosine / pdf(wi) / P_RR  
+
+SPP : samples per pixel, also how much path is to trace  
+
+
+### Sampling the Light  
+Monte Carlo methods allows **any** sampling methods, 
+so we can sample the light(therefore no rays are "wasted")  
+
+we consider the radiance coming from two parts: 
+1. light source (direct, no need to have RR) 
+2. other reflectors (indirect, RR)
+
+last little problem:
+we should consider occluder between light and pixel when we do light sampling 
+
+
+
+
+
+
+
+
+
+
 
 
 
