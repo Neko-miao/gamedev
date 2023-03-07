@@ -1,0 +1,61 @@
+# Advanced Topics in Rendering  
+
+## Advanced Light Transport  
+
+### Biased vs. Unbiased Monte Carlo Estimators  
+- AN unbiased Monte Carlo techinique does not have any systematic error  
+    - The expected value of an unbiased estimator will always be the correct value, no matter how many samples are used.  
+
+
+- Otherwise, biased  
+    - One sepecial case, the expected value converges to the correct value as infinite #samples are used -- call it consistent  
+
+### Bidirectional Path Tracing (BDPT)  
+ - recall : a path connects the camera and the light 
+ - BDPT  
+    - Traces sub-paths from both the camera and the light  
+    - Connects the end points from both sub-paths  
+
+- Suitable if the light transport is complex on the light's side  
+- Difficult to implement & quite slow  
+
+### Metropolis Light Transport(MLT)  
+
+### Photon Mapping  
+
+### Vertex Connection and Merging(VCM) 
+
+### Instant Radiosity(IR) 
+
+
+## Advanced Appearance Modeling  
+
+### Non-surface models  
+- Participating Media:Fog、Cloud  
+- Phase Function : describe the angular distribution of light scattering at any point x within participating media.  
+- Rendering  
+    - Randomly choose a direction to bounce  
+    - Randomly choose a distance to go straight  
+    - At each shading point, connnect to the light  
+
+
+### Kajiya-Kay Model  
+### Marschner Model
+
+### Double Cylinder Model - Lobes  
+
+### Granular Material  
+
+## Suface Model  
+### Translucent Material
+### Subsurface Scattering  
+### Scattering Function  
+- BSSRDF
+
+### Dipole Approximation   
+- imagine a light inside object  
+
+### Cloth  
+- A collection of twisted fibers!
+- Two levels of twist  
+- Woven or Knitted  
